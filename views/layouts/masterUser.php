@@ -10,304 +10,326 @@ if (isset($_POST['logout'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medic - Template Tailwind CSS</title>
-    <!-- Thème médical réalisé par Seb Code https://seb-code.fr
-        Formation Tailwind CSS : https://sebcode.systeme.io/apprendre-tailwindcss
-    -->
+    <title>Medic - Accueil & Prise de Rendez-vous</title>
+    <!-- Thème médical réalisé par Seb Code -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" />
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
     <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        .message-banner {
-            padding: 10px 20px;
-            margin: 10px 0;
-            border-radius: 5px;
-            text-align: center;
-            font-weight: bold;
-        }
-        .success {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .error {
-            background-color: #f44336;
-            color: white;
-        }
+        body { font-family: 'Poppins', sans-serif; }
     </style>
 </head>
-<body class="poppins text-gray-500">
-  <div class="flex justify-center">
+<body class="text-gray-500 bg-white antialiased">
+
+  <!-- Message Banner (Session alerts) -->
+  <div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4">
       <?php
       if (isset($_SESSION['message'])) {
           $message = $_SESSION['message'];
-          $messageType = $_SESSION['message_type']; 
-          echo "<div class='message-banner w-fit " . $messageType . "'>$message</div>";
+          $messageType = ($_SESSION['message_type'] === 'success') ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'; 
+          echo "<div class='p-4 rounded-2xl shadow-lg text-center font-semibold text-sm " . $messageType . "'>" . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . "</div>";
           unset($_SESSION['message']);
           unset($_SESSION['message_type']);
       }
       ?>
   </div>
 
-    <!-- Section hero et barre de navigation -->
-    <section class="bg-light pb-6">
-        <div class="container px-4 mx-auto">
-            <nav class="py-2 flex flex-col space-y-6 items-center md:flex-row md:justify-between md:space-y-0">
-                <a class="text-indigo-700 font-bold text-4xl" href="#">
-                    <img class="h-16 inline" src="../../assets/images/logo.svg" alt="Medic" > Medic
+    <!-- Fixed Navigation Bar -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-2xs">
+        <div class="container px-6 mx-auto max-w-7xl">
+            <nav class="py-4 flex flex-col space-y-4 items-center md:flex-row md:justify-between md:space-y-0">
+                <a class="text-indigo-700 font-bold text-3xl flex items-center gap-2.5 tracking-tight" href="#">
+                    <img class="h-10 inline" src="../../assets/images/logo.svg" alt="Medic"> Medic
                 </a>
-                <ul class="font-bold flex flex-col space-y-2 items-center md:flex-row md:space-y-0 md:space-x-6">
-                    <li><a class="hover:text-indigo-700" href="#">A propos</a></li>
-                    <li><a class="hover:text-indigo-700" href="#">Services</a></li>
-                    <li><a class="hover:text-indigo-700" href="#">Témoignages</a></li>
+                <ul class="font-semibold text-sm flex flex-col space-y-2 items-center md:flex-row md:space-y-0 md:space-x-8 text-gray-600">
+                    <li><a class="hover:text-indigo-700 transition" href="#apropos">A propos</a></li>
+                    <li><a class="hover:text-indigo-700 transition" href="#services">Services</a></li>
+                    <li><a class="hover:text-indigo-700 transition" href="#equipe">Témoignages</a></li>
                 </ul>
-                <div class="flex gap-2">
+                
+                <div class="flex items-center gap-4">
                     <?php
                         if (isset($_SESSION['full_name'])) {
-                            echo "<h1 class=\"border-2 border-indigo-700 text-white rounded-lg p-[2px] pl-10 pr-10 bg-indigo-700\">" . $_SESSION['full_name'] . "</h1>";
-                            
-                        } else {
-                            echo "";
+                            echo "<span class=\"text-xs font-semibold text-white bg-indigo-700 px-4 py-2 rounded-xl shadow-xs tracking-wide\">" . htmlspecialchars($_SESSION['full_name'], ENT_QUOTES, 'UTF-8') . "</span>";
                         }
-                        ?>  
+                    ?>  
 
-                    <div class="retalive">
-                        <img src="../../assets/images/team-06.png" class ="Profil" alt="" width="35"> 
-                        <div class= "menu absolute right-3 top-16 hidden">
-                            <form action="" method="POST" >
-                            <button type="submit" name="logout" class="bg-indigo-400 text-white px-2 py-1 rounded hover:bg-gray-500"><i class="bi bi-box-arrow-right"></i>Logout</button>
-                        </form>
-                        </div>  
+                    <div class="relative">
+                        <img src="../../assets/images/team-06.png" class="Profil cursor-pointer w-10 h-10 rounded-full object-cover ring-2 ring-indigo-500/30 hover:ring-indigo-600 transition" alt="Profil utilisateur" width="40"> 
                         
+                        <!-- Dropdown menu -->
+                        <div class="menu absolute right-0 top-12 hidden w-40 p-2 bg-white border border-gray-100 rounded-2xl shadow-xl z-50">
+                            <form action="" method="POST">
+                                <button type="submit" name="logout" class="w-full flex items-center gap-2 text-rose-600 px-3 py-2 rounded-xl text-xs font-semibold hover:bg-rose-50 transition">
+                                    <i class="bi bi-box-arrow-right text-sm"></i>Déconnexion
+                                </button>
+                            </form>
+                        </div>  
                     </div>
-                    
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Section hero (avec pt-28 pour compenser la navbar fixe) -->
+    <section class="bg-slate-50/50 pt-32 pb-12 border-b border-gray-100">
+        <div class="container px-6 mx-auto max-w-7xl">
+            <div class="my-12 flex flex-col items-center md:flex-row gap-12">
+                <div class="w-full py-4 order-2 md:order-1 md:w-1/2">
+                    <h1 class="mb-6 text-3xl lg:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                        Une équipe à votre écoute pour <span class="text-teal-500">vous soigner</span>
+                    </h1>
+                    <p class="mb-8 text-base lg:text-lg text-gray-600 leading-relaxed">
+                        Notre clinique offre des soins de qualité dans un cadre moderne et accueillant, avec une équipe dédiée à votre bien-être et une large gamme de services médicaux personnalisés.
+                    </p>
+                    <a href="#rendez_vous" class="inline-flex items-center justify-center px-7 py-3.5 text-sm text-white font-bold hover:bg-teal-600 rounded-xl shadow-lg shadow-indigo-700/20 transition duration-200 bg-indigo-700">
+                        Prendre rendez-vous
+                    </a>
+                </div>
+                <div class="w-full md:w-1/2 order-1 md:order-2 flex justify-center">
+                    <img class="max-w-md w-full object-contain" src="../../assets/images/docteur.png" alt="Docteur" data-aos="fade-up" data-aos-duration="1500">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section services -->
+    <section class="py-20 bg-indigo-700 text-white relative overflow-hidden" data-aos="fade-up" data-aos-duration="1500" id="services">
+        <div class="container px-6 pb-24 mx-auto max-w-7xl">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="mb-4 text-2xl md:text-4xl font-bold tracking-tight">Une clinique à la pointe pour vous proposer les meilleurs soins</h2>
+                <p class="text-indigo-100/90 text-sm md:text-base leading-relaxed">Équipée des dernières technologies médicales, notre clinique s’engage à vous offrir des soins de qualité optimale. Notre priorité est votre bien-être, dans un environnement moderne, sécurisé et chaleureux.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white text-gray-800 text-center p-8 rounded-3xl shadow-xl">
+                    <img class="h-12 mx-auto mb-4" src="../../assets/images/icone-docteur.svg" alt="Médecins spécialistes">
+                    <h3 class="mb-3 text-xl font-bold">Médecins spécialistes</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed">Des médecins spécialistes expérimentés, dédiés à votre santé, offrant des diagnostics précis et des traitements adaptés.</p>
+                </div>
+                <div class="bg-white text-gray-800 text-center p-8 rounded-3xl shadow-xl">
+                    <img class="h-12 mx-auto mb-4" src="../../assets/images/icone-urgence.svg" alt="Soins d'urgence">
+                    <h3 class="mb-3 text-xl font-bold">Soins d'urgence</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed">Des soins d'urgence rapides et efficaces, assurés par une équipe médicale qualifiée dans un environnement sécurisé.</p>
+                </div>
+                <div class="bg-white text-gray-800 text-center p-8 rounded-3xl shadow-xl">
+                    <img class="h-12 mx-auto mb-4" src="../../assets/images/icone-disponibilite.svg" alt="Disponibilité 24/7">
+                    <h3 class="mb-3 text-xl font-bold">Disponibilité 24/7</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed">Un service accessible 24h/24 et 7j/7 pour assurer votre santé en toute heure avec un accompagnement personnalisé.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section présentation (A propos) -->
+    <section class="py-24" data-aos="fade-up" data-aos-duration="1500" id="apropos">
+        <div class="container px-6 mx-auto max-w-7xl">
+            <div class="flex flex-wrap items-center gap-y-12">
+                <div class="w-full md:w-1/2 order-2 md:order-1 pr-0 md:pr-12">
+                    <h2 class="mb-6 text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">Votre confort commence dès votre arrivée</h2>
+                    <p class="mb-8 text-gray-600 leading-relaxed text-base">Notre clinique vous garantit un accueil professionnel et bienveillant. Notre équipe dévouée est à votre écoute pour vous offrir une expérience sereine et personnalisée dès votre arrivée.</p>
+                    <a class="inline-flex items-center px-6 py-3 text-sm text-white font-bold hover:bg-teal-600 rounded-xl transition duration-200 bg-indigo-700 shadow-md shadow-indigo-700/20" href="#">En savoir plus</a>
+                </div>
+                <div class="w-full md:w-1/2 order-1 md:order-2">
+                    <img class="w-full rounded-3xl shadow-xl object-cover h-80" src="../../assets/images/accueil-clinique.jpg" alt="Présentation de la clinique">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section équipe médicale (Témoignages) -->
+    <section class="py-20 bg-slate-50/50" id="equipe">
+        <div class="container px-6 mx-auto max-w-7xl">
+            <div class="max-w-3xl mx-auto mb-16 text-center" data-aos="fade-up" data-aos-duration="1500">
+                <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Experts</span>
+                <h2 class="mt-3 mb-4 text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">Une équipe hautement qualifiée</h2>
+                <p class="text-gray-600 text-sm md:text-base">Découvrez nos spécialistes dévoués à votre santé et votre guérison au quotidien.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-aos="fade-up" data-aos-duration="1500">
+                <!-- Membre 1 -->
+                <div class="bg-white p-6 pb-8 text-center rounded-3xl border border-gray-100 shadow-xs hover:shadow-xl transition">
+                    <img class="w-full h-64 object-cover mx-auto mb-6 rounded-2xl" src="../../assets/images/team-01.png" alt="Charles KHUTE">
+                    <h3 class="text-xl font-bold text-gray-900">Charles KHUTE</h3>
+                    <p class="text-sm font-medium text-teal-600 mb-6">Chirurgien</p>
+                    <div class="flex justify-center gap-4 text-gray-400">
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-facebook text-lg"></i></a>
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-x-twitter text-lg"></i></a>
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-instagram text-lg"></i></a>
+                    </div>
+                </div>
+                <!-- Membre 2 -->
+                <div class="bg-white p-6 pb-8 text-center rounded-3xl border border-gray-100 shadow-xs hover:shadow-xl transition">
+                    <img class="w-full h-64 object-cover mx-auto mb-6 rounded-2xl" src="../../assets/images/team-02.png" alt="Eva TEXAMINET">
+                    <h3 class="text-xl font-bold text-gray-900">Eva TEXAMINET</h3>
+                    <p class="text-sm font-medium text-teal-600 mb-6">Médecin généraliste</p>
+                    <div class="flex justify-center gap-4 text-gray-400">
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-facebook text-lg"></i></a>
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-x-twitter text-lg"></i></a>
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-instagram text-lg"></i></a>
+                    </div>
+                </div>
+                <!-- Membre 3 -->
+                <div class="bg-white p-6 pb-8 text-center rounded-3xl border border-gray-100 shadow-xs hover:shadow-xl transition">
+                    <img class="w-full h-64 object-cover mx-auto mb-6 rounded-2xl" src="../../assets/images/team-03.png" alt="Dan THYSTE">
+                    <h3 class="text-xl font-bold text-gray-900">Dan THYSTE</h3>
+                    <p class="text-sm font-medium text-teal-600 mb-6">Chef de service</p>
+                    <div class="flex justify-center gap-4 text-gray-400">
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-facebook text-lg"></i></a>
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-x-twitter text-lg"></i></a>
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-instagram text-lg"></i></a>
+                    </div>
+                </div>
+                <!-- Membre 4 -->
+                <div class="bg-white p-6 pb-8 text-center rounded-3xl border border-gray-100 shadow-xs hover:shadow-xl transition">
+                    <img class="w-full h-64 object-cover mx-auto mb-6 rounded-2xl" src="../../assets/images/team-04.png" alt="Joss KULTH">
+                    <h3 class="text-xl font-bold text-gray-900">Joss KULTH</h3>
+                    <p class="text-sm font-medium text-teal-600 mb-6">Médecin urgentiste</p>
+                    <div class="flex justify-center gap-4 text-gray-400">
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-facebook text-lg"></i></a>
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-x-twitter text-lg"></i></a>
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-instagram text-lg"></i></a>
+                    </div>
+                </div>
+                <!-- Membre 5 -->
+                <div class="bg-white p-6 pb-8 text-center rounded-3xl border border-gray-100 shadow-xs hover:shadow-xl transition">
+                    <img class="w-full h-64 object-cover mx-auto mb-6 rounded-2xl" src="../../assets/images/team-05.png" alt="Emma TAUME">
+                    <h3 class="text-xl font-bold text-gray-900">Emma TAUME</h3>
+                    <p class="text-sm font-medium text-teal-600 mb-6">Pédiatre</p>
+                    <div class="flex justify-center gap-4 text-gray-400">
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-facebook text-lg"></i></a>
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-x-twitter text-lg"></i></a>
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-instagram text-lg"></i></a>
+                    </div>
+                </div>
+                <!-- Membre 6 -->
+                <div class="bg-white p-6 pb-8 text-center rounded-3xl border border-gray-100 shadow-xs hover:shadow-xl transition">
+                    <img class="w-full h-64 object-cover mx-auto mb-6 rounded-2xl" src="../../assets/images/team-06.png" alt="Ray ANYMASSION">
+                    <h3 class="text-xl font-bold text-gray-900">Ray ANYMASSION</h3>
+                    <p class="text-sm font-medium text-teal-600 mb-6">Anesthésiste</p>
+                    <div class="flex justify-center gap-4 text-gray-400">
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-facebook text-lg"></i></a>
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-x-twitter text-lg"></i></a>
+                        <a class="hover:text-indigo-700 transition" href="#"><i class="fa-brands fa-instagram text-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section formulaire -->
+    <section class="relative py-24 bg-indigo-700 overflow-hidden" data-aos="fade-up" data-aos-duration="1500" id="rendez_vous">
+        <div class="container px-6 mx-auto max-w-7xl relative z-10">
+            <div class="flex flex-wrap items-center gap-12 lg:gap-0">
+                <div class="w-full lg:w-1/2 pr-0 lg:pr-12">
+                    <h2 class="mb-6 text-3xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">Prendre rendez-vous en ligne</h2>
+                    <p class="text-indigo-100 text-base leading-relaxed">Remplissez le formulaire rapide ci-contre pour planifier votre consultation avec notre équipe médicale en quelques clics.</p>
                 </div>
                 
-            </nav>
-            <div class="my-10 flex flex-col items-center md:flex-row ">
-                <div class="w-full px-4 py-8 mb-8 order-2 md:order-1 md:w-1/2  md:mb-0">
-                    <h2 class="mb-8 text-3xl lg:text-5xl font-bold text-gray-800">Une équipe à votre écoute pour <span class="text-teal-500">vous soigner</span></h2>
-                    <p class="mb-6 lg:text-lg">Notre clinique offre des soins de qualité dans un cadre moderne et accueillant, avec une équipe dédiée à votre bien-être et une large gamme de services médicaux personnalisés.</p>
-                    <a href="#rendez_vous"  class=" inline-block px-6 py-3 text-white font-bold hover:bg-teal-500 rounded transition duration-200 bg-indigo-700" >Rendez-vous</a>
-                </div>
-                <div class="w-full md:w-1/2 px-4 order-1 md:order-2">
-                    <img class="" src="../../assets/images/docteur.png" alt="Docteur" data-aos="fade-up" data-aos-duration="1500">
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Section services -->
-    <section class="pt-12 bg-indigo-700" data-aos="fade-up" data-aos-duration="1500">
-        <div class="container px-4 pb-32 mx-auto">
-            <div class="max-w-3xl mx-auto text-center mb-12">
-                <h2 class="mb-4 text-2xl md:text-4xl text-white font-bold">Une clinique à la pointe pour vous proposer les meilleurs soins</h2>
-                <p class="mb-6 text-gray-50 lg:text-lg">&Eacute;quipée des dernières technologies médicales, notre clinique s’engage à vous offrir des soins de qualité optimale. Avec une équipe d’experts dévoués, nous proposons des services personnalisés pour répondre à vos besoins de santé. Notre priorité est votre bien-être, dans un environnement moderne, sécurisé et chaleureux.</p>
-                <a class="inline-block px-6 py-2 text-sm text-white font-bold bg-teal-500 border-2 border-teal-500 hover:bg-indigo-700 hover:border-teal-500 rounded transition duration-200"
-                    href="#">Découvrir</a>
-            </div>
-            <div class="-mb-8 lg:-mb-64">
-                <div class="flex flex-wrap">
-                    <div class="w-full lg:w-1/3 px-4 mb-8">
-                        <div class="bg-gray-50 text-center p-6 rounded shadow-lg">
-                            <img class="h-12 mx-auto mb-3" src="../../assets/images/icone-docteur.svg" alt="Médecins spécialistes">
-                            <h3 class="mb-3 text-2xl text-gray-800 font-bold">Médecins spécialistes</h3>
-                            <p class="leading-loose">Des médecins spécialistes expérimentés, dédiés à votre santé, offrant des diagnostics précis et des traitements adaptés à vos besoins.</p>
-                        </div>
-                    </div>
-                    <div class="w-full lg:w-1/3 px-4 mb-8">
-                        <div class="bg-gray-50 text-center p-6 rounded shadow-lg">
-                            <img class="h-12 mx-auto mb-3" src="../../assets/images/icone-urgence.svg" alt="Soins d'urgence">
-                            <h3 class="mb-3 text-2xl text-gray-800 font-bold">Soins d'urgence</h3>
-                            <p class="leading-loose">Des soins d'urgence rapides et efficaces, assurés par une équipe médicale qualifiée dans un environnement sécurisé.</p>
-                        </div>
-                    </div>
-                    <div class="w-full lg:w-1/3 px-4 mb-8">
-                        <div class="bg-gray-50 text-center p-6 rounded shadow-lg">
-                            <img class="h-12 mx-auto mb-3" src="../../assets/images/icone-disponibilite.svg" alt="Disponibilité 24/7">
-                            <h3 class="mb-3 text-2xl text-gray-800 font-bold">Disponibilité 24/7</h3>
-                            <p class="leading-loose">Un service accessible 24h/24 et 7j/7 pour assurer votre santé en toute heure, avec rapidité, efficacité et un accompagnement personnalisé.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Section présentation -->
-    <section class="mt-24 lg:py-16" data-aos="fade-up" data-aos-duration="1500">
-        <div class="container p-4 mx-auto">
-            <div class="flex flex-wrap items-center gap-y-6">
-                <div class="w-full md:w-1/2 px-4 order-2 md:order-1">
-                    <div class="lg:max-w-2xl">
-                        <h2 class="mb-4 lg:mb-8 text-3xl lg:text-5xl font-bold text-gray-800">Votre confort commence dès votre arrivée</h2>
-                        <p class="mb-6 text-lg text-gray-500 leading-loose">Notre clinique vous garantit un accueil professionnel et bienveillant. Notre équipe dévouée est à votre écoute pour vous offrir une expérience sereine et personnalisée dès votre arrivée.</p>
-                        <a class="inline-block text-lg px-6 py-3 text-white font-bold hover:bg-teal-500 rounded transition duration-200 bg-indigo-700" href="#">En savoir plus</a>
-                    </div>
-                </div>
-                <div class="w-full md:w-1/2 px-4 order-1 md:order-2">
-                    <img class="w-full rounded-lg" src="../../assets/images/accueil-clinique.jpg" alt="Présentation de la clinique">
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Section équipe médicale -->
-    <section class="py-20">
-        <div class="container px-4 mx-auto">
-            <div class="max-w-3xl mx-auto mb-12 lg:mb-16 text-center" data-aos="fade-up" data-aos-duration="1500">
-                <h2 class="mt-2 mb-4 text-4xl lg:text-5xl font-bold text-gray-800">Une équipe hautement qualifiée</h2>
-                <p class="text-lg leading-loose">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque massa nibh, pulvinar vitae aliquet nec, accumsan aliquet orci.</p>
-            </div>
-            <div class="flex flex-wrap" data-aos="fade-up" data-aos-duration="1500">
-                <div class="w-full md:w-1/2 lg:w-1/3 p-4">
-                    <div class="p-6 pb-12 bg-gray-50 text-center rounded-lg">
-                        <img class="w-full mx-auto mb-6 rounded-lg" src="../../assets/images/team-01.png" alt="">
-                        <h3 class="text-2xl font-bold text-gray-800">Charles KHUTE</h3>
-                        <p class="mb-6 text-lg">Chirurgien</p>
-                        <div>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200 mr-8" href="#"><i class="fa-brands fa-facebook"></i></a>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200 mr-8" href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200" href="#"><i class="fa-brands fa-instagram"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-full md:w-1/2 lg:w-1/3 p-4">
-                    <div class="p-6 pb-12 bg-gray-50 rounded-lg text-center">
-                        <img class="w-full mx-auto mb-6 rounded-lg" src="../../assets/images/team-02.png" alt="">
-                        <h3 class="text-2xl font-bold text-gray-800">Eva TEXAMINET</h3>
-                        <p class="mb-6 text-lg">Médecin généraliste</p>
-                        <div>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200 mr-8" href="#"><i class="fa-brands fa-facebook"></i></a>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200 mr-8" href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200" href="#"><i class="fa-brands fa-instagram"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-full md:w-1/2 lg:w-1/3 p-4">
-                    <div class="p-6 pb-12 bg-gray-50 rounded-lg text-center">
-                        <img class="w-full mx-auto mb-6 rounded-lg" src="../../assets/images/team-03.png" alt="">
-                        <h3 class="text-2xl font-bold text-gray-800">Dan THYSTE</h3>
-                        <p class="mb-6 text-lg">Chef de service</p>
-                        <div>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200 mr-8" href="#"><i class="fa-brands fa-facebook"></i></a>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200 mr-8" href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200" href="#"><i class="fa-brands fa-instagram"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-full md:w-1/2 lg:w-1/3 px-4 py-3">
-                    <div class="p-6 pb-12 bg-gray-50 rounded-lg text-center">
-                        <img class="w-full mx-auto mb-6 rounded-lg" src="../../assets/images/team-04.png" alt="">
-                        <h3 class="text-2xl font-bold text-gray-800">Joss KULTH</h3>
-                        <p class="mb-6 text-lg">Médecin urgentiste
-                        </p>
-                        <div>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200 mr-8" href="#"><i class="fa-brands fa-facebook"></i></a>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200 mr-8" href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200" href="#"><i class="fa-brands fa-instagram"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-full md:w-1/2 lg:w-1/3 px-4 py-3">
-                    <div class="p-6 pb-12 bg-gray-50 rounded-lg text-center">
-                        <img class="w-full mx-auto mb-6 rounded-lg" src="../../assets/images/team-05.png" alt="">
-                        <h3 class="text-2xl font-bold text-gray-800">Emma TAUME</h3>
-                        <p class="mb-6 text-lg">Pédiatre</p>
-                        <div>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200 mr-8" href="#"><i class="fa-brands fa-facebook"></i></a>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200 mr-8" href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200" href="#"><i class="fa-brands fa-instagram"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-full md:w-1/2 lg:w-1/3 px-4 py-3">
-                    <div class="p-6 pb-12 bg-gray-50 rounded-lg text-center">
-                        <img class="w-full mx-auto mb-6 rounded-lg" src="../../assets/images/team-06.png" alt="">
-                        <h3 class="text-2xl font-bold text-gray-800">Ray ANYMASSION</h3>
-                        <p class="mb-6 text-lg">Anesthésiste</p>
-                        <div>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200 mr-8" href="#"><i class="fa-brands fa-facebook"></i></a>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200 mr-8" href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                            <a class="text-2xl text-teal-500 hover:text-indigo-700 transition duration-200" href="#"><i class="fa-brands fa-instagram"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Section formulaire -->
-    <section class="relative py-20 " data-aos="fade-up" data-aos-duration="1500">
-        <div class="absolute top-0 left-0 lg:bottom-0 h-[28rem] lg:h-auto w-full lg:w-8/12 bg-indigo-700"></div>
-        <div class="relative container px-4 mx-auto">
-            <div class="flex flex-wrap items-center">
-                <div class="w-full lg:w-1/2 px-4 mb-12 lg:mb-0">
-                    <div class="max-w-xl">
-                        <h2 class="mb-6 text-4xl lg:text-5xl font-bold text-white">Prendre rendez-vous en ligne</h2>
-                        <p class="text-gray-50 lg:pr-10 leading-loose">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque massa nibh, pulvinar vitae aliquet nec, accumsan aliquet orci.</p>
-                    </div>
-                </div>
-                <div class="w-full lg:w-1/2 px-4" id="rendez_vous">
-                    <div class="lg:max-w-md p-6 bg-gray-50  rounded-lg shadow-2xl">
-                        <form action="rendezVous.php" method = "POST">
-                            <h1 class="text-sm text-gray-500 font-semibold uppercase text-center">DEMANDE DE RENDEZ-VOUS</h1>
-                            <div class="mb-4">
-                                <!-- Label et champ pour le Numéro CNI -->
-                                <label for="cni"  class=" text-sm text-gray-500 font-semibold mb-2   ">CNI :</label>
-                                <input id="cni" name="cni" class="w-full py-3 pl-3 bg-white rounded-lg" type="text" placeholder="Numéro CNI" required>
-                            </div>
+                <div class="w-full lg:w-1/2">
+                    <div class="p-8 bg-white rounded-3xl shadow-2xl">
+                        <form action="rendezVous.php" method="POST" class="space-y-5">
+                            <h3 class="text-xs font-bold tracking-widest text-indigo-700 uppercase text-center mb-6">Demande de Rendez-vous</h3>
+                            
                             <div>
-                                <label for="date">Date :</label>
-                                <input id = "id" name="date" class="w-full py-3 pl-3 mb-4 bg-white rounded-lg" type="date" placeholder="Date de Rendez-vous" required>
+                                <label for="cni" class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-2">Numéro CNI :</label>
+                                <input id="cni" name="cni" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition" type="text" placeholder="Entrez votre numéro CNI" required>
                             </div>
-                            <label class="inline-block mb-4">
-                                <input class="mr-1" type="checkbox" name="terms" value="1" required>
-                                <span class="text-sm text-gray-500">En soumettant cette demande, vous acceptez notre politique concernant vos données personnelles.</span>
+                            
+                            <div>
+                                <label for="date" class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-2">Date souhaitée :</label>
+                                <input id="date" name="date" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition" type="date" required>
+                            </div>
+
+                            <label class="flex items-start gap-3 pt-2">
+                                <input class="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" type="checkbox" name="terms" value="1" required>
+                                <span class="text-xs text-gray-500 leading-normal">En soumettant cette demande, vous acceptez notre politique concernant vos données personnelles.</span>
                             </label>
-                            <button class="w-full inline-block px-6 py-3 mr-4 text-sm text-white font-bold leading-loose bg-teal-500 hover:bg-indigo-700 rounded transition duration-200">Envoyer la demande</button>
+
+                            <button type="submit" class="w-full mt-2 inline-flex items-center justify-center px-6 py-3.5 text-sm text-white font-bold bg-teal-500 hover:bg-indigo-700 rounded-xl shadow-lg shadow-teal-500/20 transition duration-200">
+                                Envoyer la demande
+                            </button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
     <!-- Pied de page -->
-    <footer class="bg-gray-50 pt-4">
-        <div class="container p-4 mx-auto flex flex-col items-center space-y-4 md:flex-row md:space-y-0 md:justify-between">
-            <a class="text-indigo-700 font-bold text-4xl" href="#">
-                <img class="h-16 inline" src="../../assets/images/logo.svg" alt="Medic"> Medic
+    <footer class="bg-gray-50 pt-12 pb-6 border-t border-gray-200">
+        <div class="container px-6 mx-auto max-w-7xl flex flex-col items-center space-y-6 md:flex-row md:space-y-0 md:justify-between pb-8">
+            <a class="text-indigo-700 font-bold text-2xl flex items-center gap-2.5" href="#">
+                <img class="h-10 inline" src="../../assets/images/logo.svg" alt="Medic"> Medic
             </a>
-            <ul class="flex flex-col text-center md:flex-row md:space-x-4 text-sm">
-                <li><a class="hover:text-gray-900" href="#">A propos</a></li>
-                <li><a class="hover:text-gray-900" href="#">La clinique</a></li>
-                <li><a class="hover:text-gray-900" href="#">Services</a></li>
-                <li><a class="hover:text-gray-900" href="#">Témoignages</a></li>
+            <ul class="flex flex-col text-center md:flex-row md:space-x-8 text-sm font-medium text-gray-600">
+                <li><a class="hover:text-indigo-700 transition" href="#apropos">A propos</a></li>
+                <li><a class="hover:text-indigo-700 transition" href="#services">Services</a></li>
+                <li><a class="hover:text-indigo-700 transition" href="#equipe">Témoignages</a></li>
             </ul>
         </div>
-        <div class="container p-4 mx-auto border-t-2 flex flex-col items-center md:flex-row md:justify-between">
-            <p class="text-sm mt-2 order-1 md:order-none md:mt-0">Tous les droits réservés © <a class="text-indigo-700" href="https://seb-code.fr/">Seb Code</a> 2024</p>
-            <div>
-                <a class="text-2xl hover:text-gray-900 mr-4" href="https://www.youtube.com/@seb-code"><i class="fa-brands fa-youtube"></i></a>
-                <a class="text-2xl hover:text-gray-900 mr-4" href="https://www.facebook.com/sebcode.fr"><i class="fa-brands fa-facebook"></i></a>
-                <a class="text-2xl hover:text-gray-900" href="https://amzn.to/3mG5oMJ"><i class="fa-brands fa-amazon"></i></a>
+        <div class="container px-6 mx-auto max-w-7xl pt-6 border-t border-gray-200 flex flex-col items-center md:flex-row md:justify-between text-xs text-gray-500">
+            <p>Tous les droits réservés © <a class="text-indigo-700 font-semibold" href="https://seb-code.fr/">Seb Code</a> 2024</p>
+            <div class="flex gap-4 mt-4 md:mt-0 text-xl text-gray-600">
+                <a class="hover:text-indigo-700 transition" href="https://www.youtube.com/@seb-code"><i class="fa-brands fa-youtube"></i></a>
+                <a class="hover:text-indigo-700 transition" href="https://www.facebook.com/sebcode.fr"><i class="fa-brands fa-facebook"></i></a>
+                <a class="hover:text-indigo-700 transition" href="https://amzn.to/3mG5oMJ"><i class="fa-brands fa-amazon"></i></a>
             </div>
         </div>
     </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTopBtn" class="fixed bottom-6 right-6 z-50 flex items-center justify-center w-12 h-12 bg-indigo-700 text-white rounded-full shadow-lg opacity-0 pointer-events-none hover:bg-teal-600 transition-all duration-300">
+        <i class="fa-solid fa-arrow-up text-lg"></i>
+    </button>
+
     <script>
         AOS.init(); 
 
-        const Profil = document.querySelector(".Profil");
-        const menu = document.querySelector(".menu");
-        Profil.addEventListener("click", function() {
-            menu.classList.toggle('hidden');
+        // Profil dropdown toggle
+        const profilImg = document.querySelector(".Profil");
+        const menuDropdown = document.querySelector(".menu");
+        
+        if (profilImg && menuDropdown) {
+            profilImg.addEventListener("click", function(e) {
+                e.stopPropagation();
+                menuDropdown.classList.toggle('hidden');
+            });
+
+            document.addEventListener("click", function(e) {
+                if (!menuDropdown.contains(e.target) && !profilImg.contains(e.target)) {
+                    menuDropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        // Scroll to Top button visibility and action
+        const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+
+        window.addEventListener("scroll", function() {
+            if (window.scrollY > 300) {
+                scrollToTopBtn.classList.remove("opacity-0", "pointer-events-none");
+                scrollToTopBtn.classList.add("opacity-100", "pointer-events-auto");
+            } else {
+                scrollToTopBtn.classList.remove("opacity-100", "pointer-events-auto");
+                scrollToTopBtn.classList.add("opacity-0", "pointer-events-none");
+            }
         });
 
+        scrollToTopBtn.addEventListener("click", function() {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
     </script>
 </body>
 </html>
