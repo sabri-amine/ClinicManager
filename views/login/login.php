@@ -8,6 +8,13 @@ if (empty($_SESSION['csrf_token'])) {
 }
 
 $error = '';
+$success = $_SESSION['success_message'] ?? '';
+if (!empty($success)) {
+    unset($_SESSION['success_message']);
+}
+if (isset($_GET['logged_out'])) {
+    $success = "Vous avez été déconnecté avec succès.";
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $csrfToken = $_POST['csrf_token'] ?? '';
@@ -470,6 +477,24 @@ toggleButton.addEventListener('click', function () {
 
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<?php if (!empty($success)): ?>
+<script>
+Swal.fire({
+    icon: 'success',
+    title: 'Succès',
+    text: <?= json_encode($success) ?>,
+    confirmButtonText: 'Continuer',
+    confirmButtonColor: '#2563eb',
+    background: '#ffffff',
+    color: '#1e293b',
+    customClass: {
+        popup: 'rounded-2xl',
+        confirmButton: 'rounded-lg'
+    }
+});
+</script>
+<?php endif; ?>
 
 <?php if ($error === "Votre compte est en attente de confirmation."): ?>
 <script>

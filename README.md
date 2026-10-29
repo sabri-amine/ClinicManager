@@ -1,132 +1,72 @@
-# Gestion d'Hôpital
+# ClinicManager — Application Web de Gestion de Clinique
 
-Ce projet est une application de gestion d’hôpital permettant de gérer les utilisateurs (patients), les administrateurs et les docteurs. Il offre une solution complète pour la création de comptes, l’administration des utilisateurs et des données médicales, tout en assurant un haut niveau de sécurité et une expérience utilisateur fluide.
-
-## Fonctionnalités principales
-
-### 1. **Utilisateurs (Patients)**
-- **Création de compte** :
-  - Formulaire sécurisé pour enregistrer un nouvel utilisateur.
-  - Validation des champs via **Regex** côté client et serveur.
-- **Authentification** :
-  - Connexion sécurisée avec redirection vers une page utilisateur personnalisée après succès.
+ClinicManager est une application web moderne et sécurisée de gestion de clinique médicale développée en **PHP** avec **PostgreSQL**.
 
 ---
 
-### 2. **Administrateurs**
-- **Authentification** :
-  - Connexion sécurisée avec redirection vers un tableau de bord administratif.
-- **Validation des comptes utilisateurs** :
-  - Gestion des nouvelles inscriptions avec options pour approuver ou rejeter.
-- **Tableau de bord avec statistiques** :
-  - Visualisation des données : par exemple, le nombre de nouveaux comptes créés quotidiennement.
-- **Gestion des données utilisateur** :
-  - **CRUD** (Créer, Lire, Modifier, Supprimer) des comptes utilisateurs et des données associées.
-  - **Archivage** : Les comptes supprimés sont marqués comme "archivés" (soft delete) pour préserver les données.
+## 🚀 Fonctionnalités par Rôle
+
+### 1. Espace Patient (Utilisateurs)
+- **Authentification sécurisée** : Inscription avec vérification, connexion protégée et hachage bcrypt.
+- **Prise de rendez-vous en ligne** :
+  - Sélection du médecin traitant selon sa spécialité.
+  - Choix de la date et du créneau horaire.
+  - **Protection anti-double réservation** : vérification en temps réel de la disponibilité du médecin pour empêcher les conflits d'horaires.
+- **Historique personnel** :
+  - Suivi des rendez-vous avec statuts clairs : *En attente*, *Confirmé*, *Terminé*, *Annulé*.
+  - Possibilité d'annuler un rendez-vous en attente.
+- **Dossier médical & Ordonnances** :
+  - Consultation des observations cliniques, diagnostics et traitements préconisés.
+  - Consultation des ordonnances avec posologies et instructions détaillées.
+- **Facturation & Reçus** : Suivi des paiements effectués ou en attente.
+
+### 2. Espace Médecin (Docteurs)
+- **Tableau de bord dynamique** : Vue d'ensemble avec statistiques réelles issues de PostgreSQL (total rendez-vous, rendez-vous du jour, dossiers médicaux, ordonnances).
+- **Gestion des rendez-vous** :
+  - Consultation des rendez-vous globaux et du planning journalier.
+  - Mise à jour du statut des consultations (*Confirmer*, *Terminer*, *Annuler*).
+  - Envoi automatique de notifications de suivi au patient.
+- **Dossiers médicaux & Prescriptions** :
+  - Création de dossiers médicaux avec diagnostic et traitement.
+  - Prescription directe d'ordonnances médicamenteuses.
+  - Attribution optionnelle de chambre en cas d'hospitalisation.
+  - Modification et mise à jour des dossiers existants (`edit_dossier.php`).
+
+### 3. Espace Administrateur
+- **Tableau de bord analytique** :
+  - Statistiques en direct : Utilisateurs actifs, comptes archivés, nouveaux inscrits du jour, total des consultations et chiffre d'affaires des factures encaissées.
+- **Gestion des utilisateurs (CRUD & Sécurité)** :
+  - Validation et confirmation des nouveaux comptes.
+  - Modification des rôles, statuts et coordonnées.
+  - **Soft delete (Archivage)** pour garantir l'intégrité des historiques médicaux.
+  - Restauration des comptes archivés.
 
 ---
 
-### 3. **Docteurs**
-- **Gestion des consultations** :
-  - Liste des patients associés à un docteur.
-  - Gestion des rendez-vous (ajout, mise à jour, suppression).
-- **Accès aux dossiers médicaux** :
-  - Consultation des dossiers patients.
-  - Ajout de notes ou de prescriptions dans les dossiers.
-  
----
+## 🔒 Sécurité & Bonnes Pratiques
 
-### 4. **Sécurité des données**
-- **Hachage des mots de passe** :
-  - Utilisation de bibliothèques comme **bcrypt** ou **argon2** pour sécuriser les mots de passe.
-- **Protection contre les attaques XSS et CSRF** :
-  - Validation des entrées utilisateur et échappement des scripts.
-  - Utilisation de jetons **CSRF** pour protéger les formulaires.
-- **Requêtes SQL préparées** :
-  - Prévention des injections SQL grâce à des requêtes sécurisées.
+- **Requêtes préparées PDO PostgreSQL** systématiques : protection intégrale contre les injections SQL.
+- **Protection CSRF** via jetons cryptographiques (`includes/auth.php`).
+- **Contrôle d'accès strict** : vérification de session et filtrage par rôle sur chaque page et chaque action (`requireRole()`).
+- **Protection XSS** : échappement des sorties via `e()` / `htmlspecialchars`.
+- **Transactions atomiques PostgreSQL** pour les opérations complexes (dossier + chambre + ordonnance).
+- **Intégrité référentielle** : gestion des contraintes et clés étrangères.
 
 ---
 
-### 5. **Fonctionnalités JavaScript**
-- **Validation avec Regex** :
-  - Vérification dynamique des formulaires pour s’assurer du format des e-mails, mots de passe, etc.
-- **Formulaires dynamiques** :
-  - Possibilité d’ajouter ou de supprimer des champs en temps réel (par exemple : ajout de plusieurs diagnostics pour un patient).
-- **Affichage interactif** :
-  - Utilisation de **modals** pour afficher des actions ou des détails sans recharger la page.
-  - Intégration de **SweetAlerts** pour des notifications conviviales et esthétiques.
+## 🛠️ Stack Technique
+
+- **Backend** : PHP 8.2+
+- **Base de données** : PostgreSQL (avec extension PDO `pdo_pgsql`)
+- **Frontend** : HTML5, Tailwind CSS, SweetAlert2, Bootstrap Icons
+- **Polices** : DM Sans, Manrope, Inter
 
 ---
 
-## Prérequis
+## 🧪 Lancer la Suite de Tests
 
-Avant de lancer le projet, assurez-vous d’avoir installé :
-- [Node.js](https://nodejs.org/) et npm (pour les fonctionnalités côté serveur et JavaScript).
-- [MySQL](https://www.mysql.com/) ou un autre système de gestion de base de données relationnelles.
-- Un environnement de développement tel que [Visual Studio Code](https://code.visualstudio.com/).
+Pour exécuter les 38 tests automatisés de syntaxe, de sécurité, de logique métier et de base de données :
 
----
-
-## Installation
-
-1. Clonez ce dépôt :  
-   ```bash
-   git clone https://github.com/Youcode-Classe-E-2024-2025/Amine_Sabri_Manager
-   ```
-2. Accédez au répertoire du projet :  
-   ```bash
-   cd gestion-hopital
-   ```
-3. Installez les dépendances nécessaires :  
-   ```bash
-   npm install
-   ```
-4. Configurez votre base de données en remplissant le fichier `.env` avec vos informations :
-   ```env
-   DB_HOST=localhost
-   DB_USER=root
-   DB_PASSWORD=mot_de_passe
-   DB_NAME=gestion_hopital
-   ```
-5. Lancez le projet :  
-   ```bash
-   npm start
-   ```
-
----
-
-## Technologies utilisées
-
-- **Frontend** :
-  - HTML5, CSS3, JavaScript (avec SweetAlert et modals).
-- **Backend** :
-  - php.
-- **Base de données** :
-  - Postgres avec requêtes SQL préparées.
-- **Sécurité** :
-  - bcrypt/argon2, validation des entrées, protection XSS et CSRF.
-
----
-
-## Contributions
-
-Les contributions sont les bienvenues ! Si vous souhaitez ajouter des fonctionnalités ou corriger des bogues, veuillez soumettre une **pull request**.
-
----
-
-## Licence
-
-Ce projet est sous licence **MIT**. Consultez le fichier [LICENSE](LICENSE) pour plus de détails.
-
-## Modélisation :
-    - Diagramme ERD basé sur le schéma fourni.
-![image](https://github.com/user-attachments/assets/a0b08203-ca98-4531-a719-0c9afebdfea4)
-    - Diagramme UML de cas d’utilisation.
-
-  ![image](https://github.com/user-attachments/assets/7533e854-fb47-4d90-b5b9-3d1140392c30)
-
-
-
-
-
-    
+```bash
+php tests/run_tests.php
+```
